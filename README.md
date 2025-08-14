@@ -1,4 +1,5 @@
-requerimentos:
-textual
-pyinstaller
-pytubefix
+##
+requerimentos:  
+textual  
+pyinstaller  
+pytubefix  
