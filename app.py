@@ -3,6 +3,7 @@ from textual.widgets import Header,Input,Button,Label
 from textual.containers import VerticalGroup,HorizontalGroup
 from textual import on
 from downloader import download
+import sys
 
 baixador = download()
 
@@ -39,6 +40,7 @@ class aplicacao(App):
         url = self.query_one("#entrada",Input)
         aviso = self.query_one("#aviso",Label)
         
+        
         if event.button.id == "verificar":
             try:
                 titulo = baixador.verificar(url.value)
@@ -48,18 +50,21 @@ class aplicacao(App):
             self.set_timer(1,lambda: aviso.update(""))
 
         elif event.button.id == "audio":
-            try:
+            aviso.update("baixando...")
+
+            async def baixar1():
                 baixador.audio(url.value)
-            finally:
                 aviso.update("audio baixado")
-            self.set_timer(1,lambda: aviso.update(""))
+                self.call_from_thread(lambda: self.set_timer(1,lambda: aviso.update("")))
+            self.run_worker(baixar1(),thread=True)
 
         elif event.button.id == "video":
-            try:
+            aviso.update("baixando...")
+            async def baixar2():
                 baixador.video(url.value)
-            finally:
                 aviso.update("video baixado")
-            self.set_timer(1,lambda: aviso.update(""))
+                self.call_from_thread(lambda: self.set_timer(1,lambda: aviso.update("")))
+            self.run_worker(baixar2(),thread=True)
 
         elif event.button.id == "limpar":
             url.value = ""
