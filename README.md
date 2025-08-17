@@ -5,3 +5,4 @@ requerimentos:
 textual  
 pyinstaller  
 pytubefix  
+moviepy
