@@ -1,16 +1,29 @@
 from pytubefix import YouTube
+import os
+from moviepy import AudioFileClip
 
 class download:
     def __init__(self):
         self.youTube = None
-        self.destino_audios = "audios"
+        self.destino_audios_tmp = "audios_tmp"
+        self.destino_audios= "audios"
         self.destino_videos = "videos"
+
+        os.makedirs(self.destino_audios_tmp, exist_ok=True)
+        os.makedirs(self.destino_audios, exist_ok=True)
+        os.makedirs(self.destino_videos, exist_ok=True)
 
     def audio(self,url):
         self.youTube = YouTube(url)
         audio = self.youTube.streams.filter(only_audio=True).first()
-        nome = self.youTube.title + ".mp3"
-        audio.download(output_path=self.destino_audios, filename=nome)
+        nome = self.youTube.title.replace("/", "-").replace("\\", "-")
+        caminho = audio.download(output_path=self.destino_audios_tmp, filename=nome)
+
+        clip = AudioFileClip(caminho)
+        clip.write_audiofile(f"{self.destino_audios}/{nome}.mp3")
+        clip.close()
+        os.remove(caminho)
+
 
     def video(self,url):
         self.youTube = YouTube(url)
@@ -22,6 +35,6 @@ class download:
         return self.youTube.title
     
 
-if __name__ =="main":
+if __name__ =="__main__":
     download()
 
